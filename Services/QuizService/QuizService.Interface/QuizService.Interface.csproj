@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="RabbitMQ.Client" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QuizService.Application\QuizService.Application.csproj" />
+    <ProjectReference Include="..\QuizService.Domain\QuizService.Domain.csproj" />
+    <ProjectReference Include="..\QuizService.Shared\QuizService.Shared.csproj" />
+    <ProjectReference Include="..\QuizService.Config\QuizService.Config.csproj" />
+  </ItemGroup>
+
+</Project>

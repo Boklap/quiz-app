@@ -1,0 +1,28 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu OnMenuChanged="UpdateCurrentMenu"/>
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <h3>
+                @currentMenu    
+            </h3>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    private string currentMenu = "";
+
+    private void UpdateCurrentMenu(string menuName)
+    {
+        currentMenu = menuName;
+    }
+}

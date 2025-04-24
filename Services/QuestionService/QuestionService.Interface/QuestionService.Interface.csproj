@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="RabbitMQ.Client" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QuestionService.Shared\QuestionService.Shared.csproj" />
+    <ProjectReference Include="..\QuestionService.Config\QuestionService.Config.csproj" />
+    <ProjectReference Include="..\QuestionService.Application\QuestionService.Application.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,71 @@
+﻿@page "/AddQuestion/{quizId}"
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Add Question</h3>
+    <div>
+        <button class="btn btn-outline-secondary me-2" @onclick="OnQuizDetailClicked">Quiz Detail</button>
+        <button class="btn btn-success" @onclick="OnSaveClicked" disabled="@_isSave">@(_isSave ? "Loading..." : "Save")</button>
+    </div>
+</div>
+
+<div class="border rounded p-3 mb-4 shadow-sm">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Selected Questions</h5>
+        </div>
+        <div class="card-body">
+            @if (_selectedQuestionIds.Count == 0)
+            {
+                <p>No questions selected yet.</p>
+            }
+            else
+            {
+                <div class="row">
+                    @foreach (var questionId in _selectedQuestionIds)
+                    {
+                        var question = selectedQuestions.FirstOrDefault(q => q.Id == questionId);
+                        if (question != null)
+                        {
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@question.QuestionText</h5>
+                                        <button class="btn btn-danger" @onclick="() => OnQustionRemoved(questionId)">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Available Questions</h5>
+        </div>
+        <div class="card-body">
+            @if (_isLoading)
+            {
+                <p>Loading questions...</p>
+            }
+            else
+            {
+                <div class="row">
+                    @foreach (var question in questionToRemove)
+                    {
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@question.QuestionText</h5>
+                                    <button class="btn btn-primary" @onclick="() => OnQustionAdded(question.Id)">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

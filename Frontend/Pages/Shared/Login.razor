@@ -1,0 +1,28 @@
+﻿@page "/login"
+
+<h3>Login</h3>
+
+<EditForm Model="@_loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label for="email">Email:</label>
+        <InputText id="email" class="form-control" @bind-Value="_loginModel.Email" />
+        <ValidationMessage For="@(() => _loginModel.Email)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="password">Password:</label>
+        <InputText id="password" type="password" class="form-control" @bind-Value="_loginModel.Password" />
+        <ValidationMessage For="@(() => _loginModel.Password)" />
+        
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="text-danger mt-2">@_errorMessage</div>
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary" disabled="@_isLoggingIn" style="@(_isLoggingIn ? "background-color: gray; border-color: gray;" : null)">
+        @(_isLoggingIn ? "Logging in..." : "Login")
+    </button>
+</EditForm>

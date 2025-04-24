@@ -1,0 +1,73 @@
+﻿@page "/QuizDetail/{quizId}"
+<h3>QuizDetail</h3>
+
+<EditForm Model="@_quiz">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Tag</label>
+        <InputSelect class="form-select" @bind-Value="_quiz.TagId">
+            <option value="">-- Select Tag --</option>
+            @if (_isLoading)
+            {
+                <option disabled>Loading...</option>
+            }
+            else
+            {
+                @foreach (var tag in TagList)
+                {
+                    <option value="@tag.Key">@tag.Value</option>
+                }
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Difficulty</label>
+        <InputSelect class="form-select" @bind-Value="_quiz.DifficultyId">
+            <option value="">-- Select Difficulty --</option>
+            @if (_isLoading)
+            {
+                <option disabled>Loading...</option>
+            }
+            else
+            {
+                @foreach (var difficulty in DifficultyList)
+                {
+                    <option value="@difficulty.Key">@difficulty.Value</option>
+                }
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <InputText class="form-control" @bind-Value="_quiz.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <InputTextArea class="form-control" @bind-Value="_quiz.Description" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Minimum Grade</label>
+        <InputNumber class="form-control" @bind-Value="_quiz.MinimumGrade" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Test Duration (minutes)</label>
+        <InputNumber class="form-control" @bind-Value="_quiz.TestDuration" />
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <button type="submit" class="btn btn-primary" @onclick="OnSubmit" disabled="@_isSubmitting">
+            @(_isSubmitting ? "Loading..." : "Save Quiz")
+        </button>
+
+        <button class="btn btn-outline-secondary" @onclick="OnManageQuestionClicked">
+            Manage Questions
+        </button>
+    </div>
+</EditForm>

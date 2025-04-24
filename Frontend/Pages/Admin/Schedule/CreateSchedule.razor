@@ -1,0 +1,88 @@
+﻿@page "/create-schedule"
+
+<h3>Create Schedule</h3>
+
+@if (_isLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card p-3 shadow-sm">
+                    <div class="mb-2">
+                        <label class="form-label"><strong>Start Date</strong></label>
+                        <div class="d-flex">
+                            <InputDate @bind-Value="StartAtDate" class="form-control form-control-sm" />
+                            <input type="time" @bind="StartAtTime" class="form-control form-control-sm" style="width: 100px;" />
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label"><strong>End Date</strong></label>
+                        <div class="d-flex">
+                            <InputDate @bind-Value="EndAtDate" class="form-control form-control-sm" />
+                            <input type="time" @bind="EndAtTime" class="form-control form-control-sm" style="width: 100px;" />
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label"><strong>Max Participants</strong></label>
+                        <InputNumber @bind-Value="Schedule.MaxParticipants" class="form-control form-control-sm" />
+                    </div>
+                    <button class="btn btn-sm btn-primary w-100 mt-2" disabled="@_isSubmitting" @onclick="HandleSubmit">@(_isSubmitting ? "Loading..." : "Submit")</button>
+                </div>
+
+                <div class="card mt-3 p-3 shadow-sm">
+                    <h6>Selected Quiz</h6>
+                    @if (!string.IsNullOrEmpty(Schedule.QuizId))
+                    {
+                        var selected = Quizzes.FirstOrDefault(q => q.Id == Schedule.QuizId);
+                        if (selected != null)
+                        {
+                            <div class="border rounded p-2">
+                                <strong>@selected.Name</strong>
+                                <p class="mb-0">Duration: @selected.TestDuration</p>
+                                <p class="mb-0">@selected.Description</p>
+                                <button class="btn btn-outline-danger btn-sm mt-2" @onclick="RemoveQuiz">Remove</button>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No quiz selected.</p>
+                    }
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <h5>Available Quizzes</h5>
+                @if (Quizzes.Count == 0)
+                {
+                    <p>No quizzes available.</p>
+                }
+                else
+                {
+                    @foreach (var quiz in Quizzes)
+                    {
+                        @if (quiz.Id == Schedule.QuizId) continue;
+                        <div class="card mb-2 quiz-card">
+                            <div class="card-body p-3">
+                                <h6 class="card-title mb-1">@quiz.Name</h6>
+                                <p class="card-text small text-muted">Duration: @quiz.TestDuration</p>
+                                <p class="card-text small text-muted">@quiz.Description</p>
+                                <button class="btn btn-outline-primary btn-sm" @onclick="() => SelectQuiz(quiz.Id)">Add</button>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="d-flex justify-content-between mt-3">
+                        <button class="btn btn-outline-secondary btn-sm" @onclick="PrevPage" disabled="!@CanPrevPage">Previous</button>
+                        <span class="align-self-center">Page @currentPage</span>
+                        <button class="btn btn-outline-secondary btn-sm" @onclick="NextPage" disabled="!@CanNextPage">Next</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

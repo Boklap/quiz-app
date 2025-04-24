@@ -1,0 +1,78 @@
+﻿@page "/create-question"
+@using Frontend.Models
+
+<h3>Create Question</h3>
+
+@foreach (var item in _questions.Select((q, index) => new { q, index }))
+{
+    <div class="border rounded p-3 mb-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">Question @(item.index + 1)</h5>
+            <button class="btn btn-danger btn-sm" @onclick="@(() => RemoveQuestion(item.index))">Remove</button>
+        </div>
+
+        <EditForm Model="item.q">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label class="form-label">Answer Type</label>
+                <select class="form-select" @bind="item.q.AnswerType">
+                    <option disabled selected value="">-- Pilih Answer Type --</option>
+                    @foreach (var type in answerTypes)
+                    {
+                        <option value="@type">@type</option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Question Text & Image (Optional)</label>
+                <div class="d-flex gap-3">
+                    <InputText class="form-control flex-fill" @bind-Value="item.q.QuestionText" />
+                    <InputFile OnChange="@(e => HandleImageUpload(e, item.index))" class="form-control" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Point</label>
+                <InputNumber class="form-control" @bind-Value="item.q.Point" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Answers</label>
+
+                @for (int i = 0; i < item.q.Answers.Count; i++)
+                {
+                    var answerIndex = i;
+                    var answer = item.q.Answers.Count > i ? item.q.Answers[i] : new Answer();
+
+                    <div class="d-flex gap-3 align-items-center justify-content-center mb-2" @key="answer">
+                        <input type="radio"
+                               name="selectedAnswer@(item.index)"
+                               @bind="item.q.Answers[answerIndex].IsSelected"
+                               @onclick="@(() => AddCorrectAnswerIndex(item.index, answerIndex))"
+                               class="form-check-input" />
+                        <InputText class="form-control flex-fill" @bind-Value="answer.Text" placeholder="Answer Text" />
+                        <InputFile OnChange="@((e) => HandleAnswerImageUpload(e, item.index, answerIndex))" class="form-control" />
+                        <button type="button" class="btn btn-outline-danger btn-sm" @onclick="@(() => RemoveAnswer(item.index, answerIndex))">
+                            Remove
+                        </button>
+                    </div>
+                }
+
+                <button type="button" class="btn btn-outline-primary btn-sm" @onclick="@(() => AddAnswer(item.index))">
+                    Add New Answer
+                </button>
+            </div>
+            <hr />
+        </EditForm>
+    </div>
+}
+
+<div class="d-flex justify-content-between mt-3">
+    <button class="btn btn-success" @onclick="AddQuestion">Add Question</button>
+    <button class="btn btn-primary" @onclick="OnSubmit" disabled="@_isLoading">
+        @(_isLoading ? "Loading..." : "Create Question")
+    </button>
+</div>

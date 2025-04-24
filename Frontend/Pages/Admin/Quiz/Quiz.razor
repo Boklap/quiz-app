@@ -1,0 +1,68 @@
+﻿@page "/quiz"
+
+<h3>Quiz</h3>
+
+<select class="form-select" style="width: 250px;">
+    <option disabled selected>Pilih kategori pertanyaan</option>
+    @foreach (var status in quizStatuses)
+    {
+        <option value="@status">@status</option>
+    }
+</select>
+
+<div class="card-list mt-5">
+    @if (_isLoading)
+    {
+        <p>Loading...</p>
+    }
+
+    else
+    {
+        @if (quizzes == null || !quizzes.Any())
+        {
+            <p class="text-muted">No quiz created.</p>
+        }
+
+        else
+        {
+            @foreach (var quiz in quizzes)
+            {
+                <div class="card mb-3" style="cursor: pointer;" @onclick="@(() => OnQuizClicked(quiz.Id))">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title mb-1">@quiz.Name</h5>
+                                <p class="mb-2 text-muted">@quiz.Description</p>
+                                <p class="mb-1"><strong>Minimum Grade:</strong> @quiz.MinimumGrade</p>
+                                <p class="mb-0"><strong>Test Duration:</strong> @quiz.TestDuration minutes</p>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-primary">Min Grade: @quiz.MinimumGrade</span>
+                            </div>                        </div>
+                        <div class="mt-3 d-flex justify-content-end gap-2">
+                            <button class="btn btn-primary" @onclick:stopPropagation="true" @onclick="@(() => OnSubmit(quiz.Id))">Submit</button>
+                            <button class="btn btn-danger" @onclick:stopPropagation="true" @onclick="@(() => OnDelete(quiz.Id))">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>
+
+@if (quizzes != null && quizzes.Any())
+{
+    <div class="d-flex justify-content-center mt-4">
+        <button class="btn btn-secondary me-2" @onclick="PreviousPage" disabled="@(!CanGoPrevious)">
+            Previous
+        </button>
+        <span class="align-self-center">Page @currentPage</span>
+        <button class="btn btn-secondary ms-2" @onclick="NextPage" disabled="@(!CanGoNext)">
+            Next
+        </button>
+    </div>
+}
+
+<button @onclick="OnCreateButtonClick" class="btn btn-primary position-fixed bottom-0 end-0 m-3" style="width: 50px; height: 50px; border-radius: 50%; font-size: 30px;">
+    +
+</button>

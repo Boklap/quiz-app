@@ -1,0 +1,68 @@
+﻿@page "/create-quiz"
+
+<h3>Create Quiz</h3>
+
+<EditForm Model="@_model">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Tag</label>
+        <InputSelect class="form-select" @bind-Value="_model.Tag">
+            <option value="">-- Select Tag --</option>
+            @if (_isLoading)
+            {
+                <option disabled>Loading...</option>
+            }
+            else
+            {
+                @foreach (var tag in TagList)
+                {
+                    <option value="@tag.Key">@tag.Value</option>
+                }
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Difficulty</label>
+        <InputSelect class="form-select" @bind-Value="_model.Difficulty">
+            <option value="">-- Select Difficulty --</option>
+            @if (_isLoading)
+            {
+                <option disabled>Loading...</option>
+            }
+            else
+            {
+                @foreach (var difficulty in DifficultyList)
+                {
+                    <option value="@difficulty.Key">@difficulty.Value</option>
+                }
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <InputText class="form-control" @bind-Value="_model.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <InputTextArea class="form-control" @bind-Value="_model.Description" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Minimum Grade</label>
+        <InputNumber class="form-control" @bind-Value="_model.MinimumGrade" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Test Duration (minutes)</label>
+        <InputNumber class="form-control" @bind-Value="_model.TestDuration" />
+    </div>
+
+    <button type="submit" class="btn btn-primary" @onclick="OnSubmit" disabled="@_isSubmitting">
+        @(_isSubmitting ? "Loading..." : "Create Quiz")
+    </button>
+</EditForm>
