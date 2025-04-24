@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  message_broker:
+    hostname: "mb_quiz_app"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - "quiz-app-network"
+    volumes:
+      - message_broker_volume:/var/lib/rabbitmq
+  
+volumes:
+  message_broker_volume:
+
+networks:
+  quiz-app-network:
+    external: true

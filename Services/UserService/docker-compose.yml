@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  user_db:
+    image: postgres:17.4-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    ports:
+      - "1001:5432"
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+    networks:
+      - quiz-app-network
+
+volumes:
+  user-db-data:
+
+networks:
+  quiz-app-network:
+    external: true

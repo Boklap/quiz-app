@@ -1,0 +1,229 @@
+{
+    "rabbit_version": "4.1.0",
+    "rabbitmq_version": "4.1.0",
+    "product_name": "RabbitMQ",
+    "product_version": "4.1.0",
+
+    "users": [
+        {
+            "name": "admin-quiz-app",
+            "password_hash": "aAJ/KLM0JGHDLTU0TuPPOtFp3R2/aTbIGG4X0onUpkf73XJv",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": "administrator"
+        }
+    ],
+
+    "vhosts": [
+        {
+            "name": "quiz-app-vhost"
+        }
+    ],
+
+    "permissions": [
+        {
+            "user": "admin-quiz-app",
+            "vhost": "quiz-app-vhost",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+
+    "exchanges": [
+        {
+            "name": "quiz.to.question.exchange",
+            "type": "topic",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false
+        },
+
+        {
+            "name": "question.to.quiz.exchange",
+            "type": "topic",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false
+        },
+
+        {
+            "name": "schedule.to.user.exchange",
+            "type": "topic",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false
+        },
+
+        {
+            "name": "user.to.schedule.exchange",
+            "type": "topic",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false
+        }
+    ],
+
+    "queues": [
+        {
+            "name": "question.fetch.queue",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-dead-letter-exchange": "quiz.to.question.exchange",
+                "x-dead-letter-routing-key": "quiz.question.fetch.retry"
+            }
+        },
+
+        {
+            "name": "quiz.receive.queue",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-dead-letter-exchange": "question.to.quiz.exchange",
+                "x-dead-letter-routing-key": "question.response.data.retry"
+            }
+        },
+
+        {
+            "name": "user.fetch.queue",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-dead-letter-exchange": "schedule.to.user.exchange",
+                "x-dead-letter-routing-key": "schedule.user.fetch.retry"
+            }
+        },
+
+        {
+            "name": "schedule.receive.queue",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-dead-letter-exchange": "schedule.to.user.exchange",
+                "x-dead-letter-routing-key": "user.response.data.retry"
+            }
+        },
+
+        {
+            "name": "question.fetch.queue.retry",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-message-ttl": 2000,
+                "x-dead-letter-exchange": "quiz.to.question.exchange",
+                "x-dead-letter-routing-key": "quiz.question.fetch"
+            }
+        },
+
+        {
+            "name": "quiz.receive.queue.retry",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-message-ttl": 2000,
+                "x-dead-letter-exchange": "question.to.quiz.exchange",
+                "x-dead-letter-routing-key": "question.response.data"
+            }
+        },
+
+        {
+            "name": "user.fetch.queue.retry",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-message-ttl": 2000,
+                "x-dead-letter-exchange": "schedule.to.user.exchange",
+                "x-dead-letter-routing-key": "schedule.user.fetch"
+            }
+        },
+
+        {
+            "name": "schedule.receive.queue.retry",
+            "vhost": "quiz-app-vhost",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-message-ttl": 2000,
+                "x-dead-letter-exchange": "schedule.to.user.exchange",
+                "x-dead-letter-routing-key": "user.response.data"
+            }
+        }
+    ],
+
+    "bindings": [
+        {
+            "source": "quiz.to.question.exchange",
+            "vhost": "quiz-app-vhost",
+            "destination": "question.fetch.queue",
+            "destination_type": "queue",
+            "routing_key": "quiz.question.fetch"
+        },
+
+        {
+            "source": "question.to.quiz.exchange",
+            "vhost": "quiz-app-vhost",
+            "destination": "quiz.receive.queue",
+            "destination_type": "queue",
+            "routing_key": "question.response.data"
+        },
+
+        {
+            "source": "schedule.to.user.exchange",
+            "vhost": "quiz-app-vhost",
+            "destination": "user.fetch.queue",
+            "destination_type": "queue",
+            "routing_key": "schedule.user.fetch"
+        },
+
+        {
+            "source": "user.to.schedule.exchange",
+            "vhost": "quiz-app-vhost",
+            "destination": "schedule.receive.queue",
+            "destination_type": "queue",
+            "routing_key": "user.response.data"
+        },
+
+        {
+            "source": "quiz.to.question.exchange",
+            "vhost": "quiz-app-vhost",
+            "destination": "question.fetch.queue.retry",
+            "destination_type": "queue",
+            "routing_key": "quiz.question.fetch.retry"
+        },
+
+        {
+            "source": "question.to.quiz.exchange",
+            "vhost": "quiz-app-vhost",
+            "destination": "quiz.receive.queue.retry",
+            "destination_type": "queue",
+            "routing_key": "question.response.data.retry"
+        },
+
+        {
+            "source": "schedule.to.user.exchange",
+            "vhost": "quiz-app-vhost",
+            "destination": "user.fetch.queue.retry",
+            "destination_type": "queue",
+            "routing_key": "schedule.user.fetch.retry"
+        },
+
+        {
+            "source": "user.to.schedule.exchange",
+            "vhost": "quiz-app-vhost",
+            "destination": "schedule.receive.queue.retry",
+            "destination_type": "queue",
+            "routing_key": "user.response.data.retry"
+        }
+    ]
+}

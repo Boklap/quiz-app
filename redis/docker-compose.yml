@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  cache_server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redis-password", "ping"]
+      interval: 60s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    ports:
+      - "6379:6379"
+    networks:
+      - "quiz-app-network"
+
+networks:
+  quiz-app-network:
+    external: true

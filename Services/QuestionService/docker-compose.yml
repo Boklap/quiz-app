@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  question_db:
+    image: mongo:8.0.8-noble
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    healthcheck:
+      test: |
+        test $$(mongosh --quiet --username ${MONGO_INITDB_ROOT_USERNAME} --password ${MONGO_INITDB_ROOT_PASSWORD} --authenticationDatabase admin --eval "db.adminCommand('ping').ok") -eq 1
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    ports:
+      - "4002:27017"
+    volumes:
+      - question-db-data:/data/db
+    networks:
+      - quiz-app-network
+
+
+volumes:
+  question-db-data:
+
+networks:
+  quiz-app-network:
+    external: true
